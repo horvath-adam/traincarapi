@@ -26,7 +26,7 @@ namespace TrainCarAPI.Context
     public static class ModelBuilderExtensions
     {
         /// <summary>
-        /// Tábla nevének megadása, hogy az entitás neve legyen az
+        /// Define the name of the table to be the name of the entity
         /// </summary>
         /// <param name="modelBuilder"></param>
         public static void RemovePluralizingTableNameConvention(this ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace TrainCarAPI.Context
         }
 
         /// <summary>
-        /// Egy-több kapcsolat esetében a cascade törlés letiltása
+        /// Disable cascade deletion for one or more connections
         /// </summary>
         /// <param name="modelBuilder"></param>
         public static void RemoveOneToManyCascadeDeleteConvention(this ModelBuilder modelBuilder)

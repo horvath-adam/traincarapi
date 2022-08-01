@@ -11,8 +11,8 @@ using TrainCarAPI.Context;
 namespace TrainCarAPI.Migrations
 {
     [DbContext(typeof(TrainCarAPIDbContext))]
-    [Migration("20220617081958_Initial")]
-    partial class Initial
+    [Migration("20220729104011_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

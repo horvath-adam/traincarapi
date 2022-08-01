@@ -4,21 +4,22 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace TrainCarAPI.Model.Entity
 {
     /// <summary>
-    /// Vasúttársaság, akik a tulajdonosai lehetnek a telephelyeknek és/vagy a vasúti gördülőállománynak
+    /// Railway company, who can be the owners of the sites and/or the railway rolling stock
+    /// The Company class extends the AbstractEntity.
     /// </summary>
     public class Company : AbstractEntity
     {
         /// <summary>
-        /// A vasúttársaság egyedi neve
+        /// Railway company name
         /// </summary>
         public string Name { get; set; }
-    }
 
-    public class CompanyEntityTypeConfiguration : IEntityTypeConfiguration<Company>
-    {
-        public void Configure(EntityTypeBuilder<Company> builder)
+        public class CompanyEntityTypeConfiguration : IEntityTypeConfiguration<Company>
         {
-            builder.HasQueryFilter(e => !e.Deleted);
+            public void Configure(EntityTypeBuilder<Company> builder)
+            {
+                builder.HasQueryFilter(e => !e.Deleted);
+            }
         }
     }
 }

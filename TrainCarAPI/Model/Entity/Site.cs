@@ -4,33 +4,38 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace TrainCarAPI.Model.Entity
 {
     /// <summary>
-    /// Telephely
+    /// Site of the Company and/or the RollingStock
+    /// The Site class extends the AbstractEntity.
     /// </summary>
     public class Site : AbstractEntity
     {
         /// <summary>
-        /// Név/város neve
+        /// Site name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Tulajdonos
-        /// </summary>
-        public Company Owner { get; set; }
-        /// <summary>
-        /// Postai cím
+        /// Postal address
         /// </summary>
         public string Address { get; set; }
         /// <summary>
-        /// Egyedi kódszám
+        /// Unique code number
         /// </summary>
         public string Code { get; set; }
-    }
+        /// <summary>
+        /// Owner id
+        /// </summary>
+        public int OwnerId { get; set; }
+        /// <summary>
+        /// Owner of the site
+        /// </summary>
+        public Company Owner { get; set; }
 
-    public class SiteEntityTypeConfiguration : IEntityTypeConfiguration<Site>
-    {
-        public void Configure(EntityTypeBuilder<Site> builder)
+        public class SiteEntityTypeConfiguration : IEntityTypeConfiguration<Site>
         {
-            builder.HasQueryFilter(e => !e.Deleted);
+            public void Configure(EntityTypeBuilder<Site> builder)
+            {
+                builder.HasQueryFilter(e => !e.Deleted);
+            }
         }
     }
 }
