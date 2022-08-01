@@ -4,32 +4,22 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace TrainCarAPI.Model.Entity
 {
     /// <summary>
-    /// Vasúti kocsi
+    /// The RollingStock class extends the AbstractEntity.
     /// </summary>
     public class RollingStock : AbstractEntity
     {
-        /// <summary>
-        /// Sorozatjel
-        /// </summary>
         public string SerialNumber { get; set; }
-        /// <summary>
-        /// Gyártási év
-        /// </summary>
         public int YearOfManufacture { get; set; }
-        /// <summary>
-        /// Pályaszám
-        /// </summary>
         public string TrackNumber { get; set; }
-        /// <summary>
-        /// Tulajdonos társaság
-        /// </summary>
+        public int OwnerId { get; set; }
         public Company Owner { get; set; }
-        /// <summary>
-        /// Telephely
-        /// </summary>
+        public int SiteId { get; set; }
         public Site Site { get; set; }
+        public string getMiddleNumber()
+        {
+            return this.TrackNumber.Split(" ")[2];
+        }
     }
-
     public class RollingStockEntityTypeConfiguration : IEntityTypeConfiguration<RollingStock>
     {
         public void Configure(EntityTypeBuilder<RollingStock> builder)

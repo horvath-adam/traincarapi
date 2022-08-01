@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TrainCarAPI.Context;
+using TrainCarAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 
 #region Db
 
@@ -33,10 +35,21 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+/// <summary>
+/// UseRouting adds route matching to the middleware pipeline. This middleware looks at the set of endpoints defined in the app, and selects the best match based on the request.
+/// </summary>
 app.UseRouting();
 
 app.UseAuthorization();
 
+
 app.MapRazorPages();
+/// <summary>
+/// UseEndpoints adds endpoint execution to the middleware pipeline. It runs the delegate associated with the selected endpoint.
+/// </summary>
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
