@@ -28,7 +28,7 @@ namespace TrainCarAPI.Model.Entity
         /// <summary>
         /// Owner of the site
         /// </summary>
-        public Company Owner { get; set; }
+        public Company? Owner { get; set; }
 
         public class SiteEntityTypeConfiguration : IEntityTypeConfiguration<Site>
         {

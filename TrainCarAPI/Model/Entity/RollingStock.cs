@@ -12,14 +12,15 @@ namespace TrainCarAPI.Model.Entity
         public int YearOfManufacture { get; set; }
         public string TrackNumber { get; set; }
         public int OwnerId { get; set; }
-        public Company Owner { get; set; }
+        public Company? Owner { get; set; }
         public int SiteId { get; set; }
-        public Site Site { get; set; }
+        public Site? Site { get; set; }
         public string getMiddleNumber()
         {
             return this.TrackNumber.Split(" ")[2];
         }
     }
+
     public class RollingStockEntityTypeConfiguration : IEntityTypeConfiguration<RollingStock>
     {
         public void Configure(EntityTypeBuilder<RollingStock> builder)

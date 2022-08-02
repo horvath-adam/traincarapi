@@ -38,5 +38,24 @@ namespace TrainCarAPI.Controllers
         {
             return _rollingStockService.GetRollingStocksBySite(siteId);
         }
+
+        [HttpPost]
+        public async Task AddRollingStock(RollingStock rollingStock)
+        {
+            await _rollingStockService.AddRollingStock(rollingStock);
+        }
+
+        [HttpPut]
+        public async Task UpdateRollingStock(RollingStock rollingStock)
+        {
+            await _rollingStockService.UpdateRollingStock(rollingStock);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteRollingStock(int id)
+        {
+            await _rollingStockService.DeleteRollingStock(id);
+        }
+
     }
 }

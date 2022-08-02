@@ -20,5 +20,17 @@ namespace TrainCarAPI.Services
         /// Get all rolling stocks by site id
         /// </summary>
         public IQueryable<RollingStock> GetRollingStocksBySite(int siteId);
+        /// <summary>
+        /// Create new rolling stock (reletad to task 3)
+        /// </summary>
+        public Task AddRollingStock(RollingStock rollingStock);
+        /// <summary>
+        /// Update rolling stock (reletad to task 3)
+        /// </summary>
+        public Task UpdateRollingStock(RollingStock rollingStock);
+        /// <summary>
+        /// Soft delete rolling stock (reletad to task 3)
+        /// </summary>
+        public Task DeleteRollingStock(int id);
     }
 }
