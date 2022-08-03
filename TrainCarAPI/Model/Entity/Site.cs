@@ -24,7 +24,7 @@ namespace TrainCarAPI.Model.Entity
         /// <summary>
         /// Owner id
         /// </summary>
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
         /// <summary>
         /// Owner of the site
         /// </summary>

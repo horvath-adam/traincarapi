@@ -52,9 +52,9 @@ namespace TrainCarAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteRollingStock(int id)
+        public async Task DeleteRollingStock(int id, [FromQuery] DateTime? disposalDate)
         {
-            await _rollingStockService.DeleteRollingStock(id);
+            await _rollingStockService.DeleteRollingStock(id, disposalDate);
         }
 
     }

@@ -68,17 +68,31 @@ namespace TrainCarAPI.Services
         /// </summary>
         public async Task UpdateRollingStock(RollingStock rollingStock)
         {
-            _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStock);
+            var rollingStockToUpdate = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(rs => rs.Id == rollingStock.Id);
+            rollingStockToUpdate.SerialNumber = rollingStock.SerialNumber;
+            rollingStockToUpdate.TrackNumber = rollingStock.TrackNumber;
+            rollingStockToUpdate.YearOfManufacture = rollingStock.YearOfManufacture;
+            rollingStockToUpdate.SiteId = rollingStock.SiteId;
+            rollingStockToUpdate.OwnerId = rollingStock.OwnerId;
+            _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStockToUpdate);
             await _trainCarAPIDbContext.SaveChangesAsync();
         }
 
         /// <summary>
         /// Soft delete rolling stock (reletad to task 3)
+        /// Save disposal date when delete rolling stock (related to task 5)
         /// </summary>
-        public async Task DeleteRollingStock(int id)
+        public async Task DeleteRollingStock(int id, DateTime? disposalDate)
         {
             var rollingStockToDelete = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(site => site.Id == id);
             if (rollingStockToDelete == null) return;
+            if(disposalDate != null)
+            {
+                rollingStockToDelete.DisposalDate = (DateTime)disposalDate;
+            } else
+            {
+                rollingStockToDelete.DisposalDate = DateTime.Now;
+            }
             rollingStockToDelete.Deleted = true;
             _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStockToDelete);
             await _trainCarAPIDbContext.SaveChangesAsync();

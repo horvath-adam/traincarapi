@@ -25,6 +25,10 @@ namespace TrainCarAPI.Context
             /// </summary>
             modelBuilder.Entity<RollingStock>().HasQueryFilter(rs => !rs.Deleted);
 
+            /// <summary>
+            /// Add default value (DateTime.Max) to RollingStock table DisposalDate field (related to task 5)
+            /// </summary>
+            modelBuilder.Entity<RollingStock>().Property(p => p.DisposalDate).HasDefaultValue(DateTime.MaxValue);
             base.OnModelCreating(modelBuilder);
         }
     }

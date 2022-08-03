@@ -31,6 +31,6 @@ namespace TrainCarAPI.Services
         /// <summary>
         /// Soft delete rolling stock (reletad to task 3)
         /// </summary>
-        public Task DeleteRollingStock(int id);
+        public Task DeleteRollingStock(int id, DateTime? disposalDate);
     }
 }

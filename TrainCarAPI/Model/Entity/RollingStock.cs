@@ -11,6 +11,10 @@ namespace TrainCarAPI.Model.Entity
         public string SerialNumber { get; set; }
         public int YearOfManufacture { get; set; }
         public string TrackNumber { get; set; }
+        /// <summary>
+        /// Disposal date related to task 5
+        /// </summary>
+        public DateTime DisposalDate { get; set; }
         public int OwnerId { get; set; }
         public Company? Owner { get; set; }
         public int SiteId { get; set; }
