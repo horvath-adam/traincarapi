@@ -7,19 +7,19 @@ namespace TrainCarAPI.Services
         /// <summary>
         /// Get all rolling stocks
         /// </summary>
-        public IQueryable<RollingStock> GetAll();
+        public IQueryable<RollingStock> GetAll(bool containDeleted);
         /// <summary>
         /// Get all rollig stocks by middleNumber
         /// </summary>
-        public IQueryable<RollingStock> GetByTrackNumberMiddleNumber(string middleNumber);
+        public IQueryable<RollingStock> GetByTrackNumberMiddleNumber(string middleNumber, bool containDeleted);
         /// <summary>
         /// Get all rolling stocks by serial number
         /// </summary>
-        public IQueryable<RollingStock> GetAllBySerialNumber(string serialNumber);
+        public IQueryable<RollingStock> GetAllBySerialNumber(string serialNumber, bool containDeleted);
         /// <summary>
         /// Get all rolling stocks by site id
         /// </summary>
-        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId);
+        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId, bool containDeleted);
         /// <summary>
         /// Create new rolling stock (reletad to task 3)
         /// </summary>

@@ -15,28 +15,28 @@ namespace TrainCarAPI.Controllers
             _rollingStockService = rollingStockService;
         }
 
-        [HttpGet]
-        public IQueryable<RollingStock> GetAll()
+        [HttpGet("{containDeleted}")]
+        public IQueryable<RollingStock> GetAll(bool containDeleted)
         {
-            return _rollingStockService.GetAll();
+            return _rollingStockService.GetAll(containDeleted);
         }
 
-        [HttpGet("{middleNumber}")]
-        public IQueryable<RollingStock> GetRollingStocksByMiddleNumber(string middleNumber)
+        [HttpGet("{middleNumber}/{containDeleted}")]
+        public IQueryable<RollingStock> GetRollingStocksByMiddleNumber(string middleNumber, bool containDeleted)
         {
-            return _rollingStockService.GetByTrackNumberMiddleNumber(middleNumber);
+            return _rollingStockService.GetByTrackNumberMiddleNumber(middleNumber, containDeleted);
         }
 
-        [HttpGet("{serialNumber}")]
-        public IQueryable<RollingStock> GetBySerialNumber(string serialNumber)
+        [HttpGet("{serialNumber}/{containDeleted}")]
+        public IQueryable<RollingStock> GetBySerialNumber(string serialNumber, bool containDeleted)
         {
-            return _rollingStockService.GetAllBySerialNumber(serialNumber);
+            return _rollingStockService.GetAllBySerialNumber(serialNumber, containDeleted);
         }
 
-        [HttpGet("{siteId}")]
-        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId)
+        [HttpGet("{siteId}/{containDeleted}")]
+        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId, bool containDeleted)
         {
-            return _rollingStockService.GetRollingStocksBySite(siteId);
+            return _rollingStockService.GetRollingStocksBySite(siteId, containDeleted);
         }
 
         [HttpPost]

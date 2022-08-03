@@ -20,12 +20,4 @@ namespace TrainCarAPI.Model.Entity
             return this.TrackNumber.Split(" ")[2];
         }
     }
-
-    public class RollingStockEntityTypeConfiguration : IEntityTypeConfiguration<RollingStock>
-    {
-        public void Configure(EntityTypeBuilder<RollingStock> builder)
-        {
-            builder.HasQueryFilter(e => !e.Deleted);
-        }
-    }
 }

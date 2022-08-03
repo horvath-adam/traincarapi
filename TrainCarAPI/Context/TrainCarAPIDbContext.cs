@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using TrainCarAPI.Model.Entity;
 
 namespace TrainCarAPI.Context
 {
@@ -18,6 +19,11 @@ namespace TrainCarAPI.Context
 
             modelBuilder.RemovePluralizingTableNameConvention();
             modelBuilder.RemoveOneToManyCascadeDeleteConvention();
+
+            /// <summary>
+            /// Global query filter for rolling stocks (related to task 4)
+            /// </summary>
+            modelBuilder.Entity<RollingStock>().HasQueryFilter(rs => !rs.Deleted);
 
             base.OnModelCreating(modelBuilder);
         }

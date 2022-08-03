@@ -29,13 +29,5 @@ namespace TrainCarAPI.Model.Entity
         /// Owner of the site
         /// </summary>
         public Company? Owner { get; set; }
-
-        public class SiteEntityTypeConfiguration : IEntityTypeConfiguration<Site>
-        {
-            public void Configure(EntityTypeBuilder<Site> builder)
-            {
-                builder.HasQueryFilter(e => !e.Deleted);
-            }
-        }
     }
 }

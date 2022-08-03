@@ -15,33 +15,43 @@ namespace TrainCarAPI.Services
         /// <summary>
         /// Get all rolling stock using dbcontext
         /// </summary>
-        public IQueryable<RollingStock> GetAll()
+        public IQueryable<RollingStock> GetAll(bool containDeleted)
         {
-            return _trainCarAPIDbContext.Set<RollingStock>();
+            return GetBasedOnContainDeleted(containDeleted);
         }
 
         /// <summary>
         /// Get a specific rolling stock by serial number
         /// </summary>
-        public IQueryable<RollingStock> GetAllBySerialNumber(string serialNumber)
+        public IQueryable<RollingStock> GetAllBySerialNumber(string serialNumber, bool containDeleted)
         {
-            return _trainCarAPIDbContext.Set<RollingStock>().ToList().Where(stock => stock.SerialNumber == serialNumber).AsQueryable();
+            return GetBasedOnContainDeleted(containDeleted).ToList().Where(stock => stock.SerialNumber == serialNumber).AsQueryable();
         }
         /// <summary>
         /// Get all Rolling stock by middle number
         /// </summary>
-        public IQueryable<RollingStock> GetByTrackNumberMiddleNumber(string middleNumber)
+        public IQueryable<RollingStock> GetByTrackNumberMiddleNumber(string middleNumber, bool containDeleted)
         {
-            var rollingStocks = _trainCarAPIDbContext.Set<RollingStock>();
+            var rollingStocks = GetBasedOnContainDeleted(containDeleted);
             return rollingStocks.ToList().Where(stock => stock.getMiddleNumber() == middleNumber).AsQueryable();
         }
 
         /// <summary>
         /// Get a specific rolling stock by site id
         /// </summary>
-        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId)
+        public IQueryable<RollingStock> GetRollingStocksBySite(int siteId, bool containDeleted)
         {
-            return _trainCarAPIDbContext.Set<RollingStock>().Where(stock => stock.SiteId == siteId);
+            return GetBasedOnContainDeleted(containDeleted).Where(stock => stock.SiteId == siteId);
+        }
+
+        /// <summary>
+        /// Get rolling stocks based on containDeleted flag (related to task 4)
+        /// </summary>
+        /// <param name="containDeleted"></param>
+        /// <returns></returns>
+        private IQueryable<RollingStock> GetBasedOnContainDeleted(bool containDeleted)
+        {
+            return containDeleted ? _trainCarAPIDbContext.Set<RollingStock>().IgnoreQueryFilters() : _trainCarAPIDbContext.Set<RollingStock>();
         }
 
         /// <summary>

@@ -13,13 +13,5 @@ namespace TrainCarAPI.Model.Entity
         /// Railway company name
         /// </summary>
         public string Name { get; set; }
-
-        public class CompanyEntityTypeConfiguration : IEntityTypeConfiguration<Company>
-        {
-            public void Configure(EntityTypeBuilder<Company> builder)
-            {
-                builder.HasQueryFilter(e => !e.Deleted);
-            }
-        }
     }
 }
