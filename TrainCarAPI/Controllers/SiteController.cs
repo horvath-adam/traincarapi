@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
 
@@ -13,6 +14,12 @@ namespace TrainCarAPI.Controllers
         public SiteController(ISiteService siteService)
         {
             _siteService = siteService;
+        }
+
+        [HttpGet("{code}")]
+        public ExtendedSiteDTO GetSiteByCode(string code)
+        {
+            return _siteService.GetSiteByCode(code);
         }
 
         [HttpPost]
