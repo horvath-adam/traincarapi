@@ -1,4 +1,5 @@
-﻿using TrainCarAPI.Model.Entity;
+﻿using TrainCarAPI.Model.DTO;
+using TrainCarAPI.Model.Entity;
 
 namespace TrainCarAPI.Services
 {
@@ -20,6 +21,12 @@ namespace TrainCarAPI.Services
         /// Get all rolling stocks by site id
         /// </summary>
         public IQueryable<RollingStock> GetRollingStocksBySite(int siteId, bool containDeleted);
+
+        /// <summary>
+        /// Get aggregated rolling stocks (number of manufactured and number of deleted rolling stocks by serial number and year) (related to task 7)
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks();
         /// <summary>
         /// Create new rolling stock (reletad to task 3)
         /// </summary>

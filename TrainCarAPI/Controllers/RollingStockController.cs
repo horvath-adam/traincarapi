@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
 
@@ -37,6 +38,12 @@ namespace TrainCarAPI.Controllers
         public IQueryable<RollingStock> GetRollingStocksBySite(int siteId, bool containDeleted)
         {
             return _rollingStockService.GetRollingStocksBySite(siteId, containDeleted);
+        }
+
+        [HttpGet]
+        public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks()
+        {
+            return _rollingStockService.GetAggergatedRollingStocks();
         }
 
         [HttpPost]

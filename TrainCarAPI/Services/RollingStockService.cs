@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrainCarAPI.Context;
+using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
 
 namespace TrainCarAPI.Services
@@ -52,6 +53,30 @@ namespace TrainCarAPI.Services
         private IQueryable<RollingStock> GetBasedOnContainDeleted(bool containDeleted)
         {
             return containDeleted ? _trainCarAPIDbContext.Set<RollingStock>().IgnoreQueryFilters() : _trainCarAPIDbContext.Set<RollingStock>();
+        }
+
+        /// <summary>
+        /// Get aggregated rolling stocks (number of manufactured and number of deleted rolling stocks by serial number and year) (related to task 7)
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks()
+        {
+            Dictionary<string, Dictionary<int, RollingStockData>> aggergatedRollingStocks = new Dictionary<string, Dictionary<int, RollingStockData>>();
+            _trainCarAPIDbContext.Set<RollingStock>().ToList().GroupBy(rs => rs.SerialNumber).ToList().ForEach(rollingStock =>
+            {
+                var years = rollingStock.Select(r => r.YearOfManufacture).Distinct().ToHashSet();
+                years.UnionWith(rollingStock.Where(r => r.DisposalDate != DateTime.MaxValue).Select(r => r.DisposalDate.Year).Distinct().ToHashSet());
+                Dictionary<int, RollingStockData> data = new Dictionary<int, RollingStockData>();
+                years.ToList().ForEach(year =>
+                {
+                    var manufacturedNumber = rollingStock.Where(r => r.YearOfManufacture == year).Count();
+                    var deletedNumber = rollingStock.Where(r => r.DisposalDate.Year == year).Count();
+                    var rollingStockData = new RollingStockData(deletedNumber, manufacturedNumber);
+                    data.Add(year, rollingStockData);
+                });
+                aggergatedRollingStocks.Add(rollingStock.FirstOrDefault().SerialNumber, data);
+            });
+            return aggergatedRollingStocks;
         }
 
         /// <summary>
