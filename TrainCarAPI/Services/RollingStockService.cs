@@ -10,6 +10,7 @@ namespace TrainCarAPI.Services
     {
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRollingStockUnitOfWork _rollingStockUnitOfWork;
 
         //private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
         /*public RollingStockService(TrainCarAPIDbContext context)
@@ -17,9 +18,10 @@ namespace TrainCarAPI.Services
             _trainCarAPIDbContext = context;
         }*/
 
-        public RollingStockService(IUnitOfWork unitOfWork)
+        public RollingStockService(IUnitOfWork unitOfWork, IRollingStockUnitOfWork rollingStockUnitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _rollingStockUnitOfWork = rollingStockUnitOfWork;
         }
 
         /// <summary>
@@ -160,6 +162,11 @@ namespace TrainCarAPI.Services
             rollingStockToDelete.Deleted = true;
             _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStockToDelete);
             await _trainCarAPIDbContext.SaveChangesAsync();*/
+        }
+
+        public IQueryable<RollingStock> GetRollingStockByYearOfManufacture(int year, bool containDeleted)
+        {
+            return _rollingStockUnitOfWork.GetRollingStockByYearOfManufacture(year, containDeleted);
         }
     }
 }

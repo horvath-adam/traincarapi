@@ -40,6 +40,12 @@ namespace TrainCarAPI.Controllers
             return _rollingStockService.GetRollingStocksBySite(siteId, containDeleted);
         }
 
+        [HttpGet("{year}/{containDeleted}")]
+        public IQueryable<RollingStock> GetRollingStockByYearOfManufacture(int year, bool containDeleted)
+        {
+            return _rollingStockService.GetRollingStockByYearOfManufacture(year, containDeleted);
+        }
+
         [HttpGet]
         public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks()
         {

@@ -17,6 +17,7 @@ namespace TrainCarAPI.Services
         /// Get all rolling stocks by serial number
         /// </summary>
         public IQueryable<RollingStock> GetAllBySerialNumber(string serialNumber, bool containDeleted);
+
         /// <summary>
         /// Get all rolling stocks by site id
         /// </summary>
@@ -27,6 +28,14 @@ namespace TrainCarAPI.Services
         /// </summary>
         /// <returns></returns>
         public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks();
+
+        /// <summary>
+        /// Get rolling stock by year of manufacture (related to task 9)
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public IQueryable<RollingStock> GetRollingStockByYearOfManufacture(int year, bool containDeleted);
+
         /// <summary>
         /// Create new rolling stock (reletad to task 3)
         /// </summary>

@@ -10,6 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IRollingStockUnitOfWork, RollingStockUnitOfWork>();
 
 #region Db
 
