@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TrainCarAPI.Context;
 using TrainCarAPI.Services;
+using TrainCarAPI.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 builder.Services.AddScoped<ISiteService, SiteService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 #region Db
 

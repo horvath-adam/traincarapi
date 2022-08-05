@@ -2,15 +2,24 @@
 using TrainCarAPI.Context;
 using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
+using TrainCarAPI.UnitOfWork;
 
 namespace TrainCarAPI.Services
 {
     public class RollingStockService : IRollingStockService
     {
-        private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
-        public RollingStockService(TrainCarAPIDbContext context)
+
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
+        /*public RollingStockService(TrainCarAPIDbContext context)
         {
             _trainCarAPIDbContext = context;
+        }*/
+
+        public RollingStockService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -28,6 +37,7 @@ namespace TrainCarAPI.Services
         {
             return GetBasedOnContainDeleted(containDeleted).ToList().Where(stock => stock.SerialNumber == serialNumber).AsQueryable();
         }
+
         /// <summary>
         /// Get all Rolling stock by middle number
         /// </summary>
@@ -47,22 +57,25 @@ namespace TrainCarAPI.Services
 
         /// <summary>
         /// Get rolling stocks based on containDeleted flag (related to task 4)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         /// <param name="containDeleted"></param>
         /// <returns></returns>
         private IQueryable<RollingStock> GetBasedOnContainDeleted(bool containDeleted)
         {
-            return containDeleted ? _trainCarAPIDbContext.Set<RollingStock>().IgnoreQueryFilters() : _trainCarAPIDbContext.Set<RollingStock>();
+            return containDeleted ? _unitOfWork.GetRepository<RollingStock>().GetAll().IgnoreQueryFilters() : _unitOfWork.GetRepository<RollingStock>().GetAll();
+            //return containDeleted ? _trainCarAPIDbContext.Set<RollingStock>().IgnoreQueryFilters() : _trainCarAPIDbContext.Set<RollingStock>();
         }
 
         /// <summary>
         /// Get aggregated rolling stocks (number of manufactured and number of deleted rolling stocks by serial number and year) (related to task 7)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         /// <returns></returns>
         public Dictionary<string, Dictionary<int, RollingStockData>> GetAggergatedRollingStocks()
         {
             Dictionary<string, Dictionary<int, RollingStockData>> aggergatedRollingStocks = new Dictionary<string, Dictionary<int, RollingStockData>>();
-            _trainCarAPIDbContext.Set<RollingStock>().ToList().GroupBy(rs => rs.SerialNumber).ToList().ForEach(rollingStock =>
+            _unitOfWork.GetRepository<RollingStock>().GetAll().ToList().GroupBy(rs => rs.SerialNumber).ToList().ForEach(rollingStock =>
             {
                 var years = rollingStock.Select(r => r.YearOfManufacture).Distinct().ToHashSet();
                 years.UnionWith(rollingStock.Where(r => r.DisposalDate != DateTime.MaxValue).Select(r => r.DisposalDate.Year).Distinct().ToHashSet());
@@ -81,35 +94,61 @@ namespace TrainCarAPI.Services
 
         /// <summary>
         /// Create new rolling stock (reletad to task 3)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task AddRollingStock(RollingStock rollingStock)
         {
-            await _trainCarAPIDbContext.Set<RollingStock>().AddAsync(rollingStock);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            await _unitOfWork.GetRepository<RollingStock>().Create(rollingStock);
+            await _unitOfWork.SaveChangesAsync();
+            /*await _trainCarAPIDbContext.Set<RollingStock>().AddAsync(rollingStock);
+            await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
 
         /// <summary>
         /// Update rolling stock (reletad to task 3)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task UpdateRollingStock(RollingStock rollingStock)
         {
-            var rollingStockToUpdate = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(rs => rs.Id == rollingStock.Id);
+            var rollingStockToUpdate = await _unitOfWork.GetRepository<RollingStock>().GetById(rollingStock.Id);
+            rollingStockToUpdate.SerialNumber = rollingStock.SerialNumber;
+            rollingStockToUpdate.TrackNumber = rollingStock.TrackNumber;
+            rollingStockToUpdate.YearOfManufacture = rollingStock.YearOfManufacture;
+            rollingStockToUpdate.SiteId = rollingStock.SiteId;
+            rollingStockToUpdate.OwnerId = rollingStock.OwnerId;
+            _unitOfWork.GetRepository<RollingStock>().Update(rollingStockToUpdate);
+            await _unitOfWork.SaveChangesAsync();
+            /*var rollingStockToUpdate = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(rs => rs.Id == rollingStock.Id);
             rollingStockToUpdate.SerialNumber = rollingStock.SerialNumber;
             rollingStockToUpdate.TrackNumber = rollingStock.TrackNumber;
             rollingStockToUpdate.YearOfManufacture = rollingStock.YearOfManufacture;
             rollingStockToUpdate.SiteId = rollingStock.SiteId;
             rollingStockToUpdate.OwnerId = rollingStock.OwnerId;
             _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStockToUpdate);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
 
         /// <summary>
         /// Soft delete rolling stock (reletad to task 3)
         /// Save disposal date when delete rolling stock (related to task 5)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task DeleteRollingStock(int id, DateTime? disposalDate)
         {
-            var rollingStockToDelete = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(site => site.Id == id);
+            var rollingStockToDelete = await _unitOfWork.GetRepository<RollingStock>().GetById(id);
+            if (disposalDate != null)
+            {
+                rollingStockToDelete.DisposalDate = (DateTime)disposalDate;
+            }
+            else
+            {
+                rollingStockToDelete.DisposalDate = DateTime.Now;
+            }
+            rollingStockToDelete.Deleted = true;
+            _unitOfWork.GetRepository<RollingStock>().Update(rollingStockToDelete);
+            await _unitOfWork.SaveChangesAsync();
+
+            /*var rollingStockToDelete = _trainCarAPIDbContext.Set<RollingStock>().FirstOrDefault(site => site.Id == id);
             if (rollingStockToDelete == null) return;
             if(disposalDate != null)
             {
@@ -120,7 +159,7 @@ namespace TrainCarAPI.Services
             }
             rollingStockToDelete.Deleted = true;
             _trainCarAPIDbContext.Set<RollingStock>().Update(rollingStockToDelete);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
     }
 }

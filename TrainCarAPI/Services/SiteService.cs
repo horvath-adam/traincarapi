@@ -2,6 +2,7 @@
 using TrainCarAPI.Context;
 using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
+using TrainCarAPI.UnitOfWork;
 
 namespace TrainCarAPI.Services
 {
@@ -9,10 +10,12 @@ namespace TrainCarAPI.Services
     {
         private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
         private readonly IRollingStockService _rollingStockService;
-        public SiteService(TrainCarAPIDbContext context, IRollingStockService rollingStockService)
+        private readonly IUnitOfWork _unitOfWork;
+        public SiteService(TrainCarAPIDbContext context, IRollingStockService rollingStockService, IUnitOfWork unitOfWork)
         {
             _trainCarAPIDbContext = context;
             _rollingStockService = rollingStockService;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -22,7 +25,7 @@ namespace TrainCarAPI.Services
         /// <returns></returns>
         public ExtendedSiteDTO GetSiteByCode(string code)
         {
-            var site = _trainCarAPIDbContext.Set<Site>().Include(s => s.Owner).FirstOrDefault(s => s.Code == code);
+            var site = _unitOfWork.GetDbSet<Site>().Include(s => s.Owner).FirstOrDefault(s => s.Code == code);
             var rollingStocks = _rollingStockService.GetRollingStocksBySite(site.Id, true).ToList();
             var extendedSiteDTO = new ExtendedSiteDTO(site.Name, site.Owner.Name);
             rollingStocks.GroupBy(rs => rs.SerialNumber).ToList().ForEach(rollingStockBySerialNumber =>
@@ -37,33 +40,42 @@ namespace TrainCarAPI.Services
 
         /// <summary>
         /// Create new site (related to task 3)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task CreateSite(Site site)
         {
-            await _trainCarAPIDbContext.Set<Site>().AddAsync(site);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            await _unitOfWork.GetRepository<Site>().Create(site);
+            await _unitOfWork.SaveChangesAsync();
+            /*await _trainCarAPIDbContext.Set<Site>().AddAsync(site);
+            await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
 
 
         /// <summary>
         /// Update site (related to task 3)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task UpdateSite(Site site)
         {
-            _trainCarAPIDbContext.Set<Site>().Update(site);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            _unitOfWork.GetRepository<Site>().Update(site);
+            await _unitOfWork.SaveChangesAsync();
+            /* _trainCarAPIDbContext.Set<Site>().Update(site);
+             await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
 
         /// <summary>
         /// Delete site (related to task 3)
+        /// Use UnitOfWork (related to task 8)
         /// </summary>
         public async Task DeleteSite(int id)
-        {
-            var siteToDelete = _trainCarAPIDbContext.Set<Site>().FirstOrDefault(site => site.Id == id);
+        { 
+            await _unitOfWork.GetRepository<Site>().DeleteSoft(id);
+            await _unitOfWork.SaveChangesAsync();
+            /*var siteToDelete = _trainCarAPIDbContext.Set<Site>().FirstOrDefault(site => site.Id == id);
             if(siteToDelete == null) return;
             siteToDelete.Deleted = true;
             _trainCarAPIDbContext.Set<Site>().Update(siteToDelete);
-            await _trainCarAPIDbContext.SaveChangesAsync();
+            await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
     }
 }
