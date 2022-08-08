@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TrainCarAPI.Context;
+using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
 using TrainCarAPI.UnitOfWork;
 
@@ -11,6 +13,12 @@ builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRollingStockUnitOfWork, RollingStockUnitOfWork>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+})
+                .AddEntityFrameworkStores<TrainCarAPIDbContext>()
+                .AddDefaultTokenProviders();
 
 #region Db
 

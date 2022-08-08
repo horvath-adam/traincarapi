@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -6,7 +8,7 @@ using TrainCarAPI.Model.Entity;
 
 namespace TrainCarAPI.Context
 {
-    public class TrainCarAPIDbContext : DbContext
+    public class TrainCarAPIDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public TrainCarAPIDbContext(DbContextOptions<TrainCarAPIDbContext> options) : base(options)
         {
