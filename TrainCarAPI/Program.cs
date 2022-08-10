@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TrainCarAPI.Context;
 using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
 using TrainCarAPI.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
-
+ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IRollingStockService, RollingStockService>();
@@ -19,6 +22,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 })
                 .AddEntityFrameworkStores<TrainCarAPIDbContext>()
                 .AddDefaultTokenProviders();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = configuration["JWT:ValidAudience"],
+        ValidIssuer = configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+    };
+}); ;
 
 #region Db
 
@@ -53,7 +67,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
 
 app.MapRazorPages();
 /// <summary>

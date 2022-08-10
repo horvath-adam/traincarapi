@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
@@ -7,6 +9,7 @@ namespace TrainCarAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RollingStockController : Controller
     {
         private readonly IRollingStockService _rollingStockService;
