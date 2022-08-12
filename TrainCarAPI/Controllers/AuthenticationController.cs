@@ -128,5 +128,17 @@ namespace TrainCarAPI.Controllers
             await _userService.InitRoles();
             return Ok();
         }
+
+        /// <summary>
+        /// Create two user one with Admin role and one with User role
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> InitUsers()
+        {
+            await _userService.InitUsers();
+            return Ok();
+        }
     }
 }
