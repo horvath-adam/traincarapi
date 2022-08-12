@@ -15,6 +15,7 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 builder.Services.AddScoped<ISiteService, SiteService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRollingStockUnitOfWork, RollingStockUnitOfWork>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>

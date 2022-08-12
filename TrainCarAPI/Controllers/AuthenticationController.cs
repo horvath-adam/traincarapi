@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
+using TrainCarAPI.Services;
 
 namespace TrainCarAPI.Controllers
 {
@@ -20,15 +21,18 @@ namespace TrainCarAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
         public AuthenticationController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _userService = userService;
         }
 
         /// <summary>
@@ -111,6 +115,18 @@ namespace TrainCarAPI.Controllers
         public async Task Logout()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        /// <summary>
+        /// Create Admin and User default roles
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> InitRoles()
+        {
+            await _userService.InitRoles();
+            return Ok();
         }
     }
 }
