@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TrainCarAPI.Context;
+using TrainCarAPI.Middleware;
 using TrainCarAPI.Model.Entity;
 using TrainCarAPI.Services;
 using TrainCarAPI.UnitOfWork;
@@ -57,7 +58,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -67,6 +67,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseMiddleware<RequestResponseMiddleware>();
 
 app.MapRazorPages();
 /// <summary>

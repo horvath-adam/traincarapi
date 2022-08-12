@@ -37,6 +37,7 @@ namespace TrainCarAPI.Controllers
         /// <param name="userForRegistration"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationDTO userForRegistration)
         {

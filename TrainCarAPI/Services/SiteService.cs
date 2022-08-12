@@ -26,6 +26,8 @@ namespace TrainCarAPI.Services
         public ExtendedSiteDTO GetSiteByCode(string code)
         {
             var site = _unitOfWork.GetDbSet<Site>().Include(s => s.Owner).FirstOrDefault(s => s.Code == code);
+            if (site == null)
+                throw new Exception("There is no site with this code " + code + "!");
             var rollingStocks = _rollingStockService.GetRollingStocksBySite(site.Id, true).ToList();
             var extendedSiteDTO = new ExtendedSiteDTO(site.Name, site.Owner.Name);
             rollingStocks.GroupBy(rs => rs.SerialNumber).ToList().ForEach(rollingStockBySerialNumber =>
