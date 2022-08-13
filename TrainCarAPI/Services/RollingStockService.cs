@@ -168,5 +168,16 @@ namespace TrainCarAPI.Services
         {
             return _rollingStockUnitOfWork.GetRollingStockByYearOfManufacture(year, containDeleted);
         }
+
+        public IEnumerable<RollingStock> GetSecondClassRollingStocks()
+        {
+            return _unitOfWork.GetRepository<RollingStock>().GetAll().ToList()
+                .Where(rs => rs.SerialNumber.StartsWith("B") && rs.getMiddleNumber().StartsWith("2"));
+        }
+
+        public RollingStock GetById(int id)
+        {
+            return _unitOfWork.Context().Set<RollingStock>().IgnoreQueryFilters().Where(r => r.Id == id).Include(r => r.Owner).FirstOrDefault();
+        }
     }
 }

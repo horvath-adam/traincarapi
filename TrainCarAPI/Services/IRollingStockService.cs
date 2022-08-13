@@ -37,6 +37,12 @@ namespace TrainCarAPI.Services
         public IQueryable<RollingStock> GetRollingStockByYearOfManufacture(int year, bool containDeleted);
 
         /// <summary>
+        /// Returns the second class rolling stocks (related to task 15)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<RollingStock> GetSecondClassRollingStocks();
+
+        /// <summary>
         /// Create new rolling stock (reletad to task 3)
         /// </summary>
         public Task AddRollingStock(RollingStock rollingStock);
@@ -48,5 +54,9 @@ namespace TrainCarAPI.Services
         /// Soft delete rolling stock (reletad to task 3)
         /// </summary>
         public Task DeleteRollingStock(int id, DateTime? disposalDate);
+        /// <summary>
+        /// Get rollingstock by id
+        /// </summary>
+        public RollingStock GetById(int id);
     }
 }

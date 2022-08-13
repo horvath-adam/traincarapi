@@ -9,7 +9,7 @@ namespace TrainCarAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
     public class SiteController : Controller
     {
         private readonly ISiteService _siteService;
@@ -25,18 +25,21 @@ namespace TrainCarAPI.Controllers
             return _siteService.GetSiteByCode(code);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task CreateSite(Site site)
         {
             await _siteService.CreateSite(site);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task UpdateSite(Site site)
         {
             await _siteService.UpdateSite(site);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task DeleteSite(int id)
         {

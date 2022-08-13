@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +7,7 @@ using System.Text;
 using TrainCarAPI.Context;
 using TrainCarAPI.Middleware;
 using TrainCarAPI.Model.Entity;
+using TrainCarAPI.Policy;
 using TrainCarAPI.Services;
 using TrainCarAPI.UnitOfWork;
 
@@ -24,6 +26,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 })
                 .AddEntityFrameworkStores<TrainCarAPIDbContext>()
                 .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IAuthorizationHandler, RailwayWorkerAuthorizationHandler>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RailwayWorkerUser", policy =>
+    policy.Requirements.Add(new RailwayWorkerPolicy()));
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters

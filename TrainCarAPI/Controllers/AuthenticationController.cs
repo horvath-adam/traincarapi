@@ -78,6 +78,7 @@ namespace TrainCarAPI.Controllers
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Actor, user.IsRailwayWorker.ToString())
                 };
 
                 foreach (var userRole in userRoles)

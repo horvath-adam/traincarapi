@@ -9,7 +9,7 @@ namespace TrainCarAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles="Admin,User")]
     public class RollingStockController : Controller
     {
         private readonly IRollingStockService _rollingStockService;
@@ -19,6 +19,7 @@ namespace TrainCarAPI.Controllers
             _rollingStockService = rollingStockService;
         }
 
+        [AllowAnonymous]
         [HttpGet("{containDeleted}")]
         public IQueryable<RollingStock> GetAll(bool containDeleted)
         {
@@ -55,18 +56,28 @@ namespace TrainCarAPI.Controllers
             return _rollingStockService.GetAggergatedRollingStocks();
         }
 
+        [Authorize(Roles = "User", Policy= "RailwayWorkerUser")]
+        [HttpGet]
+        public IEnumerable<RollingStock> GetSecondClassRollingStocks()
+        {
+            return _rollingStockService.GetSecondClassRollingStocks();
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task AddRollingStock(RollingStock rollingStock)
         {
             await _rollingStockService.AddRollingStock(rollingStock);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task UpdateRollingStock(RollingStock rollingStock)
         {
             await _rollingStockService.UpdateRollingStock(rollingStock);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task DeleteRollingStock(int id, [FromQuery] DateTime? disposalDate)
         {
