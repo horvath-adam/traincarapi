@@ -84,6 +84,7 @@ app.MapRazorPages();
 /// <summary>
 /// UseEndpoints adds endpoint execution to the middleware pipeline. It runs the delegate associated with the selected endpoint.
 /// </summary>
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
