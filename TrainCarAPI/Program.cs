@@ -34,6 +34,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RailwayWorkerUser", policy =>
     policy.Requirements.Add(new RailwayWorkerPolicy()));
 });
+builder.Services.AddMemoryCache();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters

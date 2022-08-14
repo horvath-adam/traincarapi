@@ -25,9 +25,10 @@ namespace TrainCarAPI.Repository
             return await DbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
-            await DbSet.AddAsync(entity);
+            var createdEntity = await DbSet.AddAsync(entity);
+            return createdEntity.Entity;
         }
 
         public void Update(TEntity entity)
@@ -41,11 +42,12 @@ namespace TrainCarAPI.Repository
             DbSet.Remove(entity);
         }
          
-        public async Task DeleteSoft(int id)
+        public async Task<TEntity> DeleteSoft(int id)
         {
             var entity = await GetById(id);
             entity.Deleted = true;
             Update(entity);
+            return entity;
         }
     }
 }

@@ -7,9 +7,9 @@ namespace TrainCarAPI.Repository
     {
         IQueryable<TEntity> GetAll();
         Task<TEntity> GetById(int id);
-        Task Create(TEntity entity);
+        Task<TEntity> Create(TEntity entity);
         void Update(TEntity entity);
         Task Delete(int id);
-        Task DeleteSoft(int id);
+        Task<TEntity> DeleteSoft(int id);
     }
 }
