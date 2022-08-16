@@ -22,15 +22,6 @@ namespace TrainCarAPI.Context
             modelBuilder.RemovePluralizingTableNameConvention();
             modelBuilder.RemoveOneToManyCascadeDeleteConvention();
 
-            /// <summary>
-            /// Global query filter for rolling stocks (related to task 4)
-            /// </summary>
-            modelBuilder.Entity<RollingStock>().HasQueryFilter(rs => !rs.Deleted);
-
-            /// <summary>
-            /// Add default value (DateTime.Max) to RollingStock table DisposalDate field (related to task 5)
-            /// </summary>
-            modelBuilder.Entity<RollingStock>().Property(p => p.DisposalDate).HasDefaultValue(DateTime.MaxValue);
             base.OnModelCreating(modelBuilder);
         }
     }

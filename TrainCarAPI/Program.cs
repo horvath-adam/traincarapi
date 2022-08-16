@@ -21,6 +21,7 @@ builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRollingStockUnitOfWork, RollingStockUnitOfWork>();
+builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -125,5 +126,12 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-
+using (var scope = app.Services.CreateScope())
+{
+    var cache = scope.ServiceProvider.GetService<ICacheService>();
+    if (cache != null)
+    {
+        cache.SetCache();
+    }
+}
 app.Run();

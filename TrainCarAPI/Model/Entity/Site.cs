@@ -30,4 +30,11 @@ namespace TrainCarAPI.Model.Entity
         /// </summary>
         public Company? Owner { get; set; }
     }
+
+    public class SiteEntityTypeConfiguration : IEntityTypeConfiguration<Site>
+    {
+        public void Configure(EntityTypeBuilder<Site> builder)
+        {
+        }
+    }
 }

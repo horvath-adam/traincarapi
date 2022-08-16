@@ -24,4 +24,19 @@ namespace TrainCarAPI.Model.Entity
             return this.TrackNumber.Split(" ")[2];
         }
     }
+
+    public class RollingStockEntityTypeConfiguration : IEntityTypeConfiguration<RollingStock>
+    {
+        public void Configure(EntityTypeBuilder<RollingStock> builder)
+        {
+            /// <summary>
+            /// Global query filter for rolling stocks (related to task 4)
+            /// </summary>
+            builder.HasQueryFilter(e => !e.Deleted);
+            /// <summary>
+            /// Add default value (DateTime.Max) to RollingStock table DisposalDate field (related to task 5)
+            /// </summary>
+            builder.Property(p => p.DisposalDate).HasDefaultValue(DateTime.MaxValue);
+        }
+    }
 }

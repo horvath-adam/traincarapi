@@ -12,17 +12,13 @@ namespace TrainCarAPI.Services
         private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
         private readonly IRollingStockService _rollingStockService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMemoryCache _cache;
-        public SiteService(TrainCarAPIDbContext context, IRollingStockService rollingStockService, IUnitOfWork unitOfWork, IMemoryCache memoryCache)
+        private readonly ICacheService _cacheService;
+        public SiteService(TrainCarAPIDbContext context, IRollingStockService rollingStockService, IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _trainCarAPIDbContext = context;
             _rollingStockService = rollingStockService;
             _unitOfWork = unitOfWork;
-            _cache = memoryCache;
-            _unitOfWork.GetDbSet<Site>().AsNoTracking().Include(r => r.Owner).ToList().ForEach(site =>
-            {
-                _cache.Set(site.Code, site);
-            });
+            _cacheService = cacheService;
         }
 
         /// <summary>
@@ -34,7 +30,7 @@ namespace TrainCarAPI.Services
         public ExtendedSiteDTO GetSiteByCode(string code)
         {
             Site site;
-            if (!_cache.TryGetValue(code, out site))
+            if (!_cacheService.TryGetValue(code, out site))
             {
                 site = _unitOfWork.GetDbSet<Site>().Include(s => s.Owner).FirstOrDefault(s => s.Code == code);
             }
@@ -61,7 +57,11 @@ namespace TrainCarAPI.Services
         {
             Site createdSite = await _unitOfWork.GetRepository<Site>().Create(site);
             await _unitOfWork.SaveChangesAsync();
-            _cache.Set(site.Code, createdSite);
+            createdSite = await _unitOfWork.Context().Set<Site>()
+                .Include(s => s.Owner).Where(s => s.Id == site.Id)
+                .FirstOrDefaultAsync();
+            _cacheService.Set(createdSite.Code, createdSite);
+            _cacheService.Set(createdSite.Id, createdSite);
             /*await _trainCarAPIDbContext.Set<Site>().AddAsync(site)
             await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
@@ -76,7 +76,9 @@ namespace TrainCarAPI.Services
         {
             _unitOfWork.GetRepository<Site>().Update(site);
             await _unitOfWork.SaveChangesAsync();
-            _cache.Set(site.Code, site);
+            site = await _unitOfWork.Context().Set<Site>().Include(s => s.Owner).FirstOrDefaultAsync();
+            _cacheService.Set(site.Code, site);
+            _cacheService.Set(site.Id, site);
             /* _trainCarAPIDbContext.Set<Site>().Update(site);
              await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
@@ -90,7 +92,8 @@ namespace TrainCarAPI.Services
         { 
             Site site = await _unitOfWork.GetRepository<Site>().DeleteSoft(id);
             await _unitOfWork.SaveChangesAsync();
-            _cache.Remove(site.Code);
+            _cacheService.Remove(site.Code);
+            _cacheService.Remove(site.Id);
             /*var siteToDelete = _trainCarAPIDbContext.Set<Site>().FirstOrDefault(site => site.Id == id);
             if(siteToDelete == null) return;
             siteToDelete.Deleted = true;
