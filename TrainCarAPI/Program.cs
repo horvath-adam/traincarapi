@@ -16,12 +16,14 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 builder.Services.AddScoped<IRollingStockService, RollingStockService>();
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRollingStockUnitOfWork, RollingStockUnitOfWork>();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -124,6 +126,7 @@ app.MapRazorPages();
 app.UseMiddleware<RequestResponseLoggingMiddleware>();
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapHub<NotificationHub>("/notificationHub");
     endpoints.MapControllers();
 });
 using (var scope = app.Services.CreateScope())

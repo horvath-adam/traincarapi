@@ -45,7 +45,7 @@ namespace TrainCarAPI.Services
         /// <summary>
         /// Create new rolling stock (reletad to task 3)
         /// </summary>
-        public Task AddRollingStock(RollingStock rollingStock);
+        public Task<RollingStock> AddRollingStock(RollingStock rollingStock);
         /// <summary>
         /// Update rolling stock (reletad to task 3)
         /// </summary>
@@ -58,5 +58,7 @@ namespace TrainCarAPI.Services
         /// Get rollingstock by id
         /// </summary>
         public RollingStock GetById(int id);
+
+        public Task Import(IFormFile file);
     }
 }

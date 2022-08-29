@@ -84,5 +84,13 @@ namespace TrainCarAPI.Controllers
             await _rollingStockService.DeleteRollingStock(id, disposalDate);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> ImportRollingStocks([FromForm(Name = "file")] IFormFile file)
+        {
+            _rollingStockService.Import(file);
+            return Accepted("Accepted", new { });
+        }
+
     }
 }

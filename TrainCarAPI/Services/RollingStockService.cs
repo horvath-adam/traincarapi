@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using TrainCarAPI.Context;
 using TrainCarAPI.Model.DTO;
 using TrainCarAPI.Model.Entity;
@@ -11,6 +13,9 @@ namespace TrainCarAPI.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRollingStockUnitOfWork _rollingStockUnitOfWork;
+        private readonly IMemoryCache _cache;
+        private readonly ISignalRNotificationService _notifService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         //private readonly TrainCarAPIDbContext _trainCarAPIDbContext;
         /*public RollingStockService(TrainCarAPIDbContext context)
@@ -18,10 +23,18 @@ namespace TrainCarAPI.Services
             _trainCarAPIDbContext = context;
         }*/
 
-        public RollingStockService(IUnitOfWork unitOfWork, IRollingStockUnitOfWork rollingStockUnitOfWork)
+        public RollingStockService(IUnitOfWork unitOfWork,
+            IRollingStockUnitOfWork rollingStockUnitOfWork,
+            IMemoryCache cache,
+            ISignalRNotificationService notifService,
+            IServiceScopeFactory serviceScopeFactory
+            )
         {
             _unitOfWork = unitOfWork;
             _rollingStockUnitOfWork = rollingStockUnitOfWork;
+            _cache = cache;
+            _notifService = notifService;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         /// <summary>
@@ -98,10 +111,12 @@ namespace TrainCarAPI.Services
         /// Create new rolling stock (reletad to task 3)
         /// Use UnitOfWork (related to task 8)
         /// </summary>
-        public async Task AddRollingStock(RollingStock rollingStock)
+        public async Task<RollingStock> AddRollingStock(RollingStock rollingStock)
         {
-            await _unitOfWork.GetRepository<RollingStock>().Create(rollingStock);
+            RollingStock savedRollingStock = await _unitOfWork.GetRepository<RollingStock>().Create(rollingStock);
             await _unitOfWork.SaveChangesAsync();
+            
+            return savedRollingStock;
             /*await _trainCarAPIDbContext.Set<RollingStock>().AddAsync(rollingStock);
             await _trainCarAPIDbContext.SaveChangesAsync();*/
         }
@@ -178,6 +193,76 @@ namespace TrainCarAPI.Services
         public RollingStock GetById(int id)
         {
             return _unitOfWork.Context().Set<RollingStock>().IgnoreQueryFilters().Where(r => r.Id == id).Include(r => r.Owner).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Save imported rolling stocks to database and send websocket message using signalR (task 19)
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public async Task Import(IFormFile file)
+        {
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                // Create scope for UnitOfWork beacause otherwise the scope would be disposed after saving rolling stocks
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetService<IUnitOfWork>();
+                    var rollingStocks = await ParseImportRollingstocks(reader);
+                    foreach (var rollingStock in rollingStocks)
+                    {
+                        await db.GetDbSet<RollingStock>().AddAsync(rollingStock);
+                        await db.SaveChangesAsync();
+                    }
+                    IList<RollingStockImportDTO> rollingStockImportDTOs = rollingStocks.Select(rollingStock =>
+                    {
+                        var foundRollingStock = db.GetDbSet<RollingStock>().Include(r => r.Site).Where(foundRollingStock => foundRollingStock.Id == rollingStock.Id).First();
+                        return new RollingStockImportDTO
+                        {
+                            Id = foundRollingStock.Id,
+                            SerialNumber = foundRollingStock.SerialNumber,
+                            SiteName = foundRollingStock.Site.Name,
+                            YearOfManufacture = foundRollingStock.YearOfManufacture
+                        };
+                    }).ToList();
+                    RollingStockImportResultDTO returnValue = new RollingStockImportResultDTO { rollingStocks = rollingStockImportDTOs, Count = rollingStockImportDTOs.Count };
+                    await _notifService.SendMessageAsync(returnValue);
+                }
+                    
+            }
+        }
+
+        /// <summary>
+        /// Read rolling stock data from json file (task 19)
+        /// Example:
+            /// [
+                ///{
+                ///"SerialNumber": "BDbhv",
+                ///"YearOfManufacture": "2010",
+                ///"TrackNumber": "50 55 20-05 555-7",
+                ///"OwnerId": 1,
+                ///"SiteId": 1
+                ///}
+            ///]
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        private async Task<IList<RollingStock>> ParseImportRollingstocks(StreamReader reader)
+        {
+            var json = await reader.ReadToEndAsync();
+            IList<RollingStockDTO> rollingStocksToBeImported = JsonConvert.DeserializeObject<IList<RollingStockDTO>>(json);
+            IList<RollingStock> rollingStocks = rollingStocksToBeImported.Select(rollingStockDTO =>
+            {
+                return new RollingStock
+                {
+                    SerialNumber = rollingStockDTO.SerialNumber,
+                    YearOfManufacture = rollingStockDTO.YearOfManufacture,
+                    TrackNumber = rollingStockDTO.TrackNumber,
+                    OwnerId = rollingStockDTO.OwnerId,
+                    SiteId = rollingStockDTO.SiteId
+                };
+            }).ToList();
+            return rollingStocks;
         }
     }
 }
