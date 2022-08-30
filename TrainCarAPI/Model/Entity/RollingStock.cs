@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TrainCarAPI.Attributes;
 
 namespace TrainCarAPI.Model.Entity
 {
@@ -17,6 +18,7 @@ namespace TrainCarAPI.Model.Entity
         public int YearOfManufacture { get; set; }
 
         [Required]
+        [TrackNumberValidation]
         public string TrackNumber { get; set; }
         /// <summary>
         /// Disposal date related to task 5
