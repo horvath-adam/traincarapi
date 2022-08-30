@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainCarAPI.Model.Entity
 {
@@ -8,16 +10,27 @@ namespace TrainCarAPI.Model.Entity
     /// </summary>
     public class RollingStock : AbstractEntity
     {
+        [Required]
         public string SerialNumber { get; set; }
+
+        [Required]
         public int YearOfManufacture { get; set; }
+
+        [Required]
         public string TrackNumber { get; set; }
         /// <summary>
         /// Disposal date related to task 5
         /// </summary>
         public DateTime DisposalDate { get; set; }
+
         public int OwnerId { get; set; }
+
+        [ForeignKey("OwnerId")]
         public Company? Owner { get; set; }
+
         public int SiteId { get; set; }
+
+        [ForeignKey("SiteId")]
         public Site? Site { get; set; }
         public string getMiddleNumber()
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace TrainCarAPI.Model.Entity
 {
@@ -8,8 +9,13 @@ namespace TrainCarAPI.Model.Entity
     /// </summary>
     public class ApplicationUser: IdentityUser<int>
     {
+        [Required]
         public DateTime DateOfBirth { get; set; }
+
+        [Required]
         public bool IsRailwayWorker { get; set; }
+
+        [MaxLength(100)]
         public string RailwayCompanyName { get; set; }
     }
 }

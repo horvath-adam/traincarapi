@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 
 namespace TrainCarAPI.Model.Entity
 {
@@ -12,6 +13,8 @@ namespace TrainCarAPI.Model.Entity
         /// <summary>
         /// Railway company name
         /// </summary>
+        [Required]
+        [MaxLength(250)]
         public string Name { get; set; }
 
     }
