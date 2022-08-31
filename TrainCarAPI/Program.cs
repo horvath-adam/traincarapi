@@ -8,6 +8,7 @@ using System.Text;
 using TrainCarAPI.Context;
 using TrainCarAPI.Middleware;
 using TrainCarAPI.Model.Entity;
+using TrainCarAPI.Options;
 using TrainCarAPI.Policy;
 using TrainCarAPI.Services;
 using TrainCarAPI.UnitOfWork;
@@ -80,12 +81,17 @@ builder.Services.AddSwaggerGen(c =>
             }
         });
 });
+
 #region Db
 
+var dbContextOptions = new DBConnectionOption();
+builder.Services.Configure<DBConnectionOption>(
+    builder.Configuration.GetSection(DBConnectionOption.ConnectionStrings));
+builder.Configuration.GetSection(DBConnectionOption.ConnectionStrings).Bind(dbContextOptions);
 //Add custom TrainCarAPIDbContext "service" to the container.
 builder.Services.AddDbContext<TrainCarAPIDbContext>(options =>
 {
-    var dbBuilder = options.UseSqlServer(@"Server=(local);Database=TrainCarDb;Trusted_Connection=True;MultipleActiveResultSets=true;");
+    var dbBuilder = options.UseSqlServer(dbContextOptions.TrainCarAPIDb);
     if (builder.Environment.IsDevelopment())
     {
         dbBuilder.EnableSensitiveDataLogging();
